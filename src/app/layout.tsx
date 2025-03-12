@@ -17,6 +17,34 @@ export const metadata: Metadata = {
   },
 };
 
+// export const metadata: Metadata = {
+//   title: "My Blog",
+//   description: "A blog about tech and programming.",
+//   openGraph: {
+//     type: "website",
+//     url: "https://example.com",
+//     title: "My Blog",
+//     description: "A blog about tech and programming.",
+//     images: [{ url: "/og-image.png" }],
+//   },
+//   other: {
+//     "application/ld+json": JSON.stringify({
+//       "@context": "https://schema.org",
+//       "@type": "WebSite",
+//       "url": "https://example.com",
+//       "name": "My Blog",
+//       "publisher": {
+//         "@type": "Organization",
+//         "name": "My Blog",
+//         "logo": {
+//           "@type": "ImageObject",
+//           "url": "/logo.png",
+//         },
+//       },
+//     }),
+//   },
+// };
+
 export default function RootLayout({
   children,
 }: Readonly<{

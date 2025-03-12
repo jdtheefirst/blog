@@ -5,6 +5,8 @@ type Props = {
 };
 
 export function PostBody({ content }: Props) {
+  console.log("This is the content inside:", content);
+
   return (
     <div className="max-w-2xl mx-auto">
       <div

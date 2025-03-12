@@ -1,23 +1,65 @@
+"use client";
+
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getAllPosts, getPostBySlug } from "@/lib/api";
-import { CMS_NAME } from "@/lib/constants";
-import markdownToHtml from "@/lib/markdownToHtml";
 import Alert from "@/app/_components/alert";
 import Container from "@/app/_components/container";
 import Header from "@/app/_components/header";
 import { PostBody } from "@/app/_components/post-body";
 import { PostHeader } from "@/app/_components/post-header";
+import markdownToHtml from "@/lib/markdownToHtml";
 
-export default async function Post(props: Params) {
-  const params = await props.params;
-  const post = getPostBySlug(params.slug);
+type Params = { slug: string };
+
+export async function generateStaticParams() {
+  const posts = await getAllPosts(); // ✅ No await needed (SSG)
+  return posts.map((post) => ({ slug: post.slug }));
+}
+
+export function generateMetadata({ params }: { params: Params }): Metadata {
+  const post = getPostBySlug(params.slug); // ✅ Still sync
+
+  if (!post) return notFound();
+
+  return {
+    title: post.title,
+    description: post.excerpt,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      url: `https://example.com/blog/${params.slug}`,
+      type: "article",
+      images: [{ url: post.ogImage.url }],
+    },
+    other: {
+      "application/ld+json": JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        headline: post.title,
+        image: post.ogImage.url,
+        datePublished: post.date,
+        author: {
+          "@type": "Person",
+          name: post.author,
+        },
+      }),
+    },
+  };
+}
+
+export default function Post({ params }: { params: Params }) {
+  const post = getPostBySlug(params.slug); // ✅ Sync, no hydration issues
 
   if (!post) {
+    console.error("❌ Post not found for slug:", params.slug);
     return notFound();
   }
 
-  const content = await markdownToHtml(post.content || "");
+  const htmlContent = markdownToHtml(post.content);
+  console.log("Markdown:", htmlContent);
+
+  console.log("content:", post.content);
 
   return (
     <main>
@@ -31,42 +73,10 @@ export default async function Post(props: Params) {
             date={post.date}
             author={post.author}
           />
-          <PostBody content={content} />
+          <PostBody content={post.content} />{" "}
+          {/* ✅ Directly use pre-converted HTML */}
         </article>
       </Container>
     </main>
   );
-}
-
-type Params = {
-  params: Promise<{
-    slug: string;
-  }>;
-};
-
-export async function generateMetadata(props: Params): Promise<Metadata> {
-  const params = await props.params;
-  const post = getPostBySlug(params.slug);
-
-  if (!post) {
-    return notFound();
-  }
-
-  const title = `${post.title} | Next.js Blog Example with ${CMS_NAME}`;
-
-  return {
-    title,
-    openGraph: {
-      title,
-      images: [post.ogImage.url],
-    },
-  };
-}
-
-export async function generateStaticParams() {
-  const posts = getAllPosts();
-
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
 }

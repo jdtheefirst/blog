@@ -3,9 +3,22 @@ import { HeroPost } from "@/app/_components/hero-post";
 import { Intro } from "@/app/_components/intro";
 import { MoreStories } from "@/app/_components/more-stories";
 import { getAllPosts } from "@/lib/api";
+import markdownToHtml from "@/lib/markdownToHtml";
 
-export default function Index() {
-  const allPosts = getAllPosts();
+export default async function Index() {
+  // ✅ Make it async
+  const allPosts = await getAllPosts(); // ✅ Await it
+
+  if (!allPosts.length) {
+    return (
+      <main>
+        <Container>
+          <Intro />
+          <p>No posts found.</p>
+        </Container>
+      </main>
+    );
+  }
 
   const heroPost = allPosts[0];
 
