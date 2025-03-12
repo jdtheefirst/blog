@@ -29,14 +29,17 @@ const Alert = ({ preview }: Props) => {
             </>
           ) : (
             <>
-              The source code for this blog is{" "}
               <a
-                href={`https://github.com/vercel/next.js/tree/canary/examples/${EXAMPLE_PATH}`}
+                href="https://nextjs.org/"
                 className="underline hover:text-blue-600 duration-200 transition-colors"
               >
-                available on GitHub
-              </a>
-              .
+                Samma
+              </a>{" "}
+              is a modern hybrid martial art from Eastern Africa with its own
+              training curriculum (cheni 6) and a distinctive sparring method
+              that combines the three ranges of man to man combat, that is;
+              strike by an extension/stick, strike by limb (elbow, fist, knee
+              and foot) and finally grappling.
             </>
           )}
         </div>
