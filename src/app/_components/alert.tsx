@@ -30,7 +30,7 @@ const Alert = ({ preview }: Props) => {
           ) : (
             <>
               <a
-                href="https://nextjs.org/"
+                href="https://worldsamma.org/"
                 className="underline hover:text-blue-600 duration-200 transition-colors"
               >
                 Samma
