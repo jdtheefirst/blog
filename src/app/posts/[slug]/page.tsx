@@ -8,26 +8,22 @@ import { PostBody } from "@/app/_components/post-body";
 import { PostHeader } from "@/app/_components/post-header";
 import markdownToHtml from "@/lib/markdownToHtml";
 
-type Params = { slug: string };
-
 // ✅ Generate static paths for SSG
 export async function generateStaticParams() {
-  const posts = await getAllPosts(); // Await the result
+  const posts = getAllPosts();
+
   return posts.map((post) => ({
     slug: post.slug,
   }));
 }
 
 // ✅ Generate metadata for the post
-export async function generateMetadata({
-  params,
-}: {
-  params: Params;
-}): Promise<Metadata> {
-  const post = await getPostBySlug(params.slug); // Fetch the post by slug
+export async function generateMetadata(props: Params): Promise<Metadata> {
+  const params = await props.params;
+  const post = getPostBySlug(params.slug);
 
-  if (post === null) {
-    return notFound(); // Return 404 if post is not found
+  if (!post) {
+    return notFound();
   }
 
   return {
@@ -57,14 +53,15 @@ export async function generateMetadata({
 }
 
 // ✅ Post component
-export default async function Post({ params }: { params: Params }) {
-  const post = await getPostBySlug(params.slug); // Fetch the post by slug
+export default async function Post(props: Params) {
+  const params = await props.params;
+  const post = getPostBySlug(params.slug);
 
-  if (post === null) {
-    return notFound(); // Gracefully handle missing posts
+  if (!post) {
+    return notFound();
   }
 
-  const content = await markdownToHtml(post.content || ""); // Convert markdown to HTML
+  const content = await markdownToHtml(post.content || "");
 
   return (
     <main>
@@ -78,9 +75,15 @@ export default async function Post({ params }: { params: Params }) {
             date={post.date}
             author={post.author}
           />
-          <PostBody content={content} /> {/* Render the post content */}
+          <PostBody content={content} />
         </article>
       </Container>
     </main>
   );
 }
+
+type Params = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
