@@ -1,13 +1,8 @@
 import { remark } from "remark";
 import html from "remark-html";
+import remarkGfm from "remark-gfm"; // ✅ Enables tables
 
 export default async function markdownToHtml(markdown: string) {
-  try {
-    const result = await remark().use(html).process(markdown);
-    console.log("✅ Processed HTML:", result.toString()); // Check output
-    return result.toString();
-  } catch (error) {
-    console.error("❌ Markdown conversion failed:", error);
-    return "<p>Error processing content</p>";
-  }
+  const result = await remark().use(remarkGfm).use(html).process(markdown);
+  return result.toString();
 }

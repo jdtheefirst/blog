@@ -19,7 +19,8 @@ ogImage:
 🥋 Low Calf Kick: Popularized in modern MMA, but Samma uses it strategically to cripple mobility fast.
 
 **Street Scenarios & Tactical Use**
-🚶 Situation 1: A Sudden Attack in a Narrow Alley
+
+**🚶 Situation 1: A Sudden Attack in a Narrow Alley**
 In confined spaces, a front kick to the midsection pushes an attacker back, buying time to escape. If they persist, a sharp low calf kick can leave them unable to chase.
 
 **🏙️ Situation 2: Confrontation with Multiple Opponents**
@@ -28,4 +29,4 @@ Samma fighters are trained to use angles—instead of squaring up, pivoting afte
 **🏠 Situation 3: Home Invasion Defense**
 A sidekick to the intruder’s knee is enough to end the fight before it starts. Unlike traditional martial arts that emphasize formal stances, Samma’s techniques work from any position, even when caught off guard.
 
-## #MMA is built for rules and rounds. #Samma is built for real fights.
+## #MMA is built for rules and rounds. Samma is built for real fights.

@@ -1,5 +1,3 @@
-"use client";
-
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getAllPosts, getPostBySlug } from "@/lib/api";
@@ -12,15 +10,25 @@ import markdownToHtml from "@/lib/markdownToHtml";
 
 type Params = { slug: string };
 
+// ✅ Generate static paths for SSG
 export async function generateStaticParams() {
-  const posts = await getAllPosts(); // ✅ No await needed (SSG)
-  return posts.map((post) => ({ slug: post.slug }));
+  const posts = await getAllPosts(); // Await the result
+  return posts.map((post) => ({
+    slug: post.slug,
+  }));
 }
 
-export function generateMetadata({ params }: { params: Params }): Metadata {
-  const post = getPostBySlug(params.slug); // ✅ Still sync
+// ✅ Generate metadata for the post
+export async function generateMetadata({
+  params,
+}: {
+  params: Params;
+}): Promise<Metadata> {
+  const post = await getPostBySlug(params.slug); // Fetch the post by slug
 
-  if (!post) return notFound();
+  if (post === null) {
+    return notFound(); // Return 404 if post is not found
+  }
 
   return {
     title: post.title,
@@ -28,16 +36,16 @@ export function generateMetadata({ params }: { params: Params }): Metadata {
     openGraph: {
       title: post.title,
       description: post.excerpt,
-      url: `https://example.com/blog/${params.slug}`,
+      url: `${post.ogImage?.url}`,
       type: "article",
-      images: [{ url: post.ogImage.url }],
+      images: [{ url: post.ogImage?.url }],
     },
     other: {
       "application/ld+json": JSON.stringify({
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         headline: post.title,
-        image: post.ogImage.url,
+        image: post.ogImage?.url,
         datePublished: post.date,
         author: {
           "@type": "Person",
@@ -48,18 +56,15 @@ export function generateMetadata({ params }: { params: Params }): Metadata {
   };
 }
 
-export default function Post({ params }: { params: Params }) {
-  const post = getPostBySlug(params.slug); // ✅ Sync, no hydration issues
+// ✅ Post component
+export default async function Post({ params }: { params: Params }) {
+  const post = await getPostBySlug(params.slug); // Fetch the post by slug
 
-  if (!post) {
-    console.error("❌ Post not found for slug:", params.slug);
-    return notFound();
+  if (post === null) {
+    return notFound(); // Gracefully handle missing posts
   }
 
-  const htmlContent = markdownToHtml(post.content);
-  console.log("Markdown:", htmlContent);
-
-  console.log("content:", post.content);
+  const content = await markdownToHtml(post.content || ""); // Convert markdown to HTML
 
   return (
     <main>
@@ -73,8 +78,7 @@ export default function Post({ params }: { params: Params }) {
             date={post.date}
             author={post.author}
           />
-          <PostBody content={post.content} />{" "}
-          {/* ✅ Directly use pre-converted HTML */}
+          <PostBody content={content} /> {/* Render the post content */}
         </article>
       </Container>
     </main>
